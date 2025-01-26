@@ -1,48 +1,49 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
 import Keyboard from "@/componnents/keyboard/intex";
+import Microwave from "@/componnents/microwave";
+import ContainerCookModels from "@/componnents/containerCookModels";
 
 export default function Home() {
+  const [wavesArray, setWavesArray] = useState<string[]>([]);
+
   const [timeValue, setTimeValue] = useState<string>("0");
   const [powerValue, setPowerValue] = useState<number>(10);
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
   const [countdownActive, setCountdownActive] = useState<boolean>(false);
+  const [isInvalidTime, setisInvalidTime] = useState<boolean>(false);
+
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const remainingTimeRef = useRef<number | null>(remainingTime);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout | null = null;
+    remainingTimeRef.current = remainingTime;
+  }, [remainingTime]);
 
+  useEffect(() => {
     if (countdownActive && remainingTime !== null) {
-      timer = setInterval(() => {
+      intervalRef.current = setInterval(() => {
         setRemainingTime((prev) => {
-          if (prev && prev > 0) {
-            return prev - 1;
+          if (remainingTimeRef.current && remainingTimeRef.current > 0) {
+            return prev! - 1;
           } else {
-            clearInterval(timer!);
+            clearInterval(intervalRef.current!);
             setCountdownActive(false);
             return 0;
           }
         });
+        if (remainingTime != 0) {
+          setWavesArray((prevArray) => [...prevArray, ".".repeat(powerValue)]);
+        }
         setTimeValue(remainingTime.toString());
       }, 1000);
     }
 
     return () => {
-      if (timer) clearInterval(timer);
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
   }, [countdownActive, remainingTime]);
-
-  const startCountdown = () => {
-    const totalSeconds = parseInt(timeFormated.replace(":", ""), 10);
-    console.log(totalSeconds);
-    if (totalSeconds > 0) {
-      setRemainingTime(totalSeconds);
-      setCountdownActive(true);
-    } else if (totalSeconds === 0 && setCountdownActive(true)) {
-      setRemainingTime(() => totalSeconds + 30);
-      setCountdownActive(true);
-    }
-  };
 
   const timeFormated = (() => {
     const totalSeconds = parseInt(timeValue, 10) || 0;
@@ -64,6 +65,20 @@ export default function Home() {
       )}`;
     }
   })();
+  const [minutes, seconds] = timeFormated.split(":").map(Number);
+  const totalSeconds = minutes * 60 + seconds;
+
+  const startCountdown = () => {
+    if (countdownActive) {
+      setRemainingTime((prev) => (prev !== null ? prev + 30 : 30));
+    } else if (totalSeconds > 0) {
+      setRemainingTime(totalSeconds);
+      setCountdownActive(true);
+    } else {
+      setRemainingTime(30);
+      setCountdownActive(true);
+    }
+  };
 
   const handleNumberCLick = (num: number) => {
     setTimeValue((prev) => {
@@ -89,64 +104,94 @@ export default function Home() {
     }
   };
 
+  const pauseCancel = () => {
+    if (countdownActive) {
+      setCountdownActive(false);
+    } else {
+      setWavesArray([]);
+      setTimeValue("0");
+    }
+  };
+
+  useEffect(() => {
+    if (totalSeconds >= 0 && totalSeconds <= 120) {
+      setisInvalidTime(false);
+    } else {
+      setisInvalidTime(true);
+    }
+  }, [totalSeconds]);
+
   return (
-    <div>
-      <div>
-        <div>
-          <p>Tempo selecionado</p>
-          <h4>
-            {countdownActive ? formatTime(remainingTime || 0) : timeFormated}
-          </h4>
-        </div>
-        <div>
-          <p>Potencia</p>
-          <h4>{powerValue}</h4>
-        </div>
-      </div>
-      <div>
-        <h3>ERROR</h3>
-      </div>
+    <main className={styles.body}>
       <div className={styles.containerMenu}>
-        <h5>
-          Digite o tempo necessário para o preparo ou tecle com os digitos
-          abaixo
-        </h5>
-        <input type="number" value={timeValue} onChange={handleInputChange} />
-        <Keyboard onNumberClick={handleNumberCLick} />
-        <div className={styles.containerButtons}>
-          <button
-            className={styles.buttonKeyboard}
-            onClick={() => setTimeValue("0")}
-          >
-            Zerar
-          </button>
-          <button
-            className={styles.buttonKeyboard}
-            onClick={() =>
-              setTimeValue((prev) =>
-                prev.length > 1 ? prev.slice(0, -1) : "0"
-              )
-            }
-          >
-            Apagar
-          </button>
+        <div className={styles.containerVisor}>
+          <div>
+            <h6>Tempo</h6>
+            <h5>
+              {countdownActive ? formatTime(remainingTime || 0) : timeFormated}
+            </h5>
+          </div>
+          <div>
+            <h6>Potencia</h6>
+            <h5>{powerValue}</h5>
+          </div>
         </div>
-        <div>
-          <button
-            className={styles.buttonKeyboard}
-            onClick={() => setPowerValue((prev) => (prev < 10 ? prev + 1 : 0))}
-          >
-            Potencia
-          </button>
-          <button
-            className={styles.buttonKeyboard}
-            type="button"
-            onClick={startCountdown}
-          >
-            Iniciar
-          </button>
+        {isInvalidTime ? (
+          <div className={styles.containerError}>
+            <h5>ERROR</h5>
+            <h6>
+              Digite um tempo valido, entre 1 segundo e 2 minutos para produtos
+              sem preparação pré definida
+            </h6>
+          </div>
+        ) : (
+          <></>
+        )}
+        <div className={styles.containerBoard}>
+          <input
+            className={styles.timeInput}
+            type="number"
+            value={timeValue}
+            onChange={handleInputChange}
+          />
+          <Keyboard onNumberClick={handleNumberCLick} />
+          <div className={styles.containerButtons}>
+            <button
+              className={styles.buttonKeyboard}
+              onClick={() =>
+                setTimeValue((prev) =>
+                  prev.length > 1 ? prev.slice(0, -1) : "0"
+                )
+              }
+            >
+              <h5>Apagar</h5>
+            </button>
+            <button
+              className={styles.buttonKeyboard}
+              onClick={() =>
+                setPowerValue((prev) => (prev < 10 ? prev + 1 : 1))
+              }
+            >
+              <h5>Potencia</h5>
+              <h6>Alterar</h6>
+            </button>
+            <button
+              className={styles.buttonKeyboard}
+              type="button"
+              onClick={startCountdown}
+            >
+              <h5>Iniciar</h5>
+              <h6>+30 seg</h6>
+            </button>
+            <button className={styles.buttonKeyboard} onClick={pauseCancel}>
+              <h5>Pausar</h5>
+              <h6>/Cancelar</h6>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+      <Microwave wavesArray={wavesArray} countdownActive={countdownActive} />
+      <ContainerCookModels />
+    </main>
   );
 }

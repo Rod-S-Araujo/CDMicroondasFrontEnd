@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap");
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -33,6 +35,15 @@ body {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+h5 {
+  font-family: "Orbitron", serif;
+  font-size: 20px;
+}
+h6 {
+  font-family: "Orbitron", serif;
+  font-size: 12px;
 }
 
 @media (prefers-color-scheme: dark) {

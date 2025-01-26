@@ -1,0 +1,40 @@
+.containerMicrowave {
+  height: 700px;
+  width: 700px;
+  margin: 10px 0;
+  border: 1px solid black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.microwaveCavity {
+  margin: auto;
+  width: 500px;
+  height: 500px;
+  border: 2px solid black;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-around;
+  position: relative;
+  flex-wrap: wrap;
+}
+.light {
+  width: 500px;
+  height: 500px;
+  border: 2px solid black;
+  background-color: #ffffdc;
+  position: absolute;
+  z-index: 0;
+}
+.loadingBar {
+  width: 400px;
+  height: 20px;
+  border: 2px solid black;
+  border-radius: 10px;
+  display: flex;
+}
+.wave {
+  list-style: none;
+  z-index: 5;
+}
