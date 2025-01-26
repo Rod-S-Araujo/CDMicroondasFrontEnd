@@ -5,6 +5,7 @@ interface ICookModel {
   potencia: number;
   stringAquecimento: string;
   instrucoes: string;
+  alteravel?: boolean;
 }
 
 export default ICookModel;

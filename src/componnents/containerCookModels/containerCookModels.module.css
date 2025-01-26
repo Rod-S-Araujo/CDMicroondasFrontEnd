@@ -1,0 +1,74 @@
+.containerCookModel {
+  display: flex;
+  flex-direction: column;
+  margin: 10px 0;
+  border: 1px solid black;
+  width: 400px;
+  padding: 5px;
+  gap: 10px;
+  border-radius: 0 10px 10px 0;
+}
+.modelSeletor {
+  display: flex;
+  justify-content: space-between;
+  width: 300px;
+  height: 40px;
+  padding: 5px;
+  border: 1px solid black;
+  border-right: none;
+  border-radius: 15px 0 0 15px;
+  cursor: pointer;
+}
+.barDetail {
+  display: block;
+  margin: 10px 0;
+  height: 2px;
+  width: 300px;
+  background-color: black;
+}
+.inputInfo {
+  width: 350px;
+  border-radius: 10px;
+  padding: 5px 2px;
+}
+.buttonSaveEdit {
+  all: unset;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  width: 350px;
+  justify-content: center;
+  align-items: center;
+  margin: 10px 0;
+  border: 1px solid black;
+  border-radius: 15px;
+  padding: 10px;
+}
+.containerItem {
+  display: flex;
+}
+.inalterable {
+  background: #d3d3d3;
+}
+.editButton {
+  all: unset;
+  cursor: pointer;
+  border: 1px solid black;
+  border-left: none;
+  border-radius: 0 15px 0 0;
+  height: 50%;
+  padding: 0 5px;
+}
+.deleteButton {
+  all: unset;
+  cursor: pointer;
+  border: 1px solid black;
+  border-left: none;
+  border-radius: 0 0 15px 0;
+  height: 50%;
+  padding: 0 5px;
+}
+.itemSeletor {
+  display: flex;
+  flex-direction: column;
+}

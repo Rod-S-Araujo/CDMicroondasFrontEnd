@@ -45,6 +45,10 @@ h6 {
   font-family: "Orbitron", serif;
   font-size: 12px;
 }
+p {
+  font-family: "Orbitron", serif;
+  font-size: 10px;
+}
 
 @media (prefers-color-scheme: dark) {
   html {

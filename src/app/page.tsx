@@ -4,8 +4,10 @@ import styles from "./page.module.css";
 import Keyboard from "@/componnents/keyboard/intex";
 import Microwave from "@/componnents/microwave";
 import ContainerCookModels from "@/componnents/containerCookModels";
+import { useCookModel } from "@/componnents/context/cookModelContext";
 
 export default function Home() {
+  const { modelSelected } = useCookModel();
   const [wavesArray, setWavesArray] = useState<string[]>([]);
 
   const [timeValue, setTimeValue] = useState<string>("0");
@@ -20,6 +22,16 @@ export default function Home() {
   useEffect(() => {
     remainingTimeRef.current = remainingTime;
   }, [remainingTime]);
+
+  useEffect(() => {
+    if (modelSelected) {
+      setPowerValue(modelSelected.potencia);
+      setTimeValue((modelSelected.tempo * 100).toString());
+    } else {
+      setPowerValue(10);
+      setTimeValue("0");
+    }
+  }, [modelSelected]);
 
   useEffect(() => {
     if (countdownActive && remainingTime !== null) {
@@ -89,6 +101,10 @@ export default function Home() {
     });
   };
 
+  const handlePowerClick = (num: number) => {
+    setPowerValue(num);
+  };
+
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -114,7 +130,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    if (totalSeconds >= 0 && totalSeconds <= 120) {
+    if ((totalSeconds >= 0 && totalSeconds <= 120) || modelSelected) {
       setisInvalidTime(false);
     } else {
       setisInvalidTime(true);
@@ -191,7 +207,12 @@ export default function Home() {
         </div>
       </div>
       <Microwave wavesArray={wavesArray} countdownActive={countdownActive} />
-      <ContainerCookModels />
+      <ContainerCookModels
+        tempo={timeFormated}
+        potencia={powerValue}
+        onNumberClick={handleNumberCLick}
+        onPowerClick={handlePowerClick}
+      />
     </main>
   );
 }
