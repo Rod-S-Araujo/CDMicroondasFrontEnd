@@ -1,7 +1,7 @@
 import ICookModel from "@/interfaces/ICookModel";
 import instance from "../instance";
 
-const ENDPOINT = "http://localhost:5165/CookModel";
+const ENDPOINT = "http://localhost:8080/CookModel";
 
 export const GetAll = async () => {
   const response = await instance.get(ENDPOINT);
