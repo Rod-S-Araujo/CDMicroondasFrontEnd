@@ -38,3 +38,15 @@
   list-style: none;
   z-index: 5;
 }
+.box {
+  display: flex;
+  flex-direction: column;
+}
+
+.progress {
+  display: block;
+  background-color: blue;
+  height: 100%;
+  border-radius: 10px;
+  z-index: 5;
+}

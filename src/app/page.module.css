@@ -20,6 +20,16 @@
   gap: 10px;
   flex-wrap: wrap;
 }
+.block {
+  background-color: #999;
+  opacity: 0.5;
+  height: 390px;
+  width: 300px;
+  position: absolute;
+  z-index: 5;
+  color: red;
+  padding: 20px 5px;
+}
 .buttonKeyboard {
   display: flex;
   flex-direction: column;
@@ -60,4 +70,6 @@
   align-items: center;
   width: 100%;
   margin: 10px;
+  position: relative;
+  z-index: 0;
 }

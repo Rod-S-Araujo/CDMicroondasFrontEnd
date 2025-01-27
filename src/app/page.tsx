@@ -15,6 +15,8 @@ export default function Home() {
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
   const [countdownActive, setCountdownActive] = useState<boolean>(false);
   const [isInvalidTime, setisInvalidTime] = useState<boolean>(false);
+  const [totalTime, setTotalTime] = useState<number>(0);
+  const [progress, setProgress] = useState<number>(0);
 
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const remainingTimeRef = useRef<number | null>(remainingTime);
@@ -46,7 +48,12 @@ export default function Home() {
           }
         });
         if (remainingTime != 0) {
-          setWavesArray((prevArray) => [...prevArray, ".".repeat(powerValue)]);
+          setWavesArray((prevArray) => [
+            ...prevArray,
+            (modelSelected ? modelSelected.stringAquecimento : ".").repeat(
+              powerValue
+            ),
+          ]);
         }
         setTimeValue(remainingTime.toString());
       }, 1000);
@@ -80,15 +87,26 @@ export default function Home() {
   const [minutes, seconds] = timeFormated.split(":").map(Number);
   const totalSeconds = minutes * 60 + seconds;
 
+  useEffect(() => {
+    setProgress(
+      Math.round(((totalTime - parseInt(timeValue)) / totalTime) * 100)
+    );
+    console.log(progress, timeValue, totalTime);
+  }, [timeValue]);
+
   const startCountdown = () => {
-    if (countdownActive) {
+    if (modelSelected && countdownActive) {
+    } else if (countdownActive) {
       setRemainingTime((prev) => (prev !== null ? prev + 30 : 30));
+      setTotalTime((prev) => (prev !== null ? prev + 30 : 30));
     } else if (totalSeconds > 0) {
       setRemainingTime(totalSeconds);
       setCountdownActive(true);
+      setTotalTime(totalSeconds);
     } else {
       setRemainingTime(30);
       setCountdownActive(true);
+      setTotalTime(30);
     }
   };
 
@@ -170,6 +188,15 @@ export default function Home() {
             value={timeValue}
             onChange={handleInputChange}
           />
+          {modelSelected ? (
+            <span className={styles.block}>
+              <h5>
+                Não é permitido alterar informações de padrões pré definidos
+              </h5>
+            </span>
+          ) : (
+            <></>
+          )}
           <Keyboard onNumberClick={handleNumberCLick} />
           <div className={styles.containerButtons}>
             <button
@@ -206,7 +233,11 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <Microwave wavesArray={wavesArray} countdownActive={countdownActive} />
+      <Microwave
+        wavesArray={wavesArray}
+        countdownActive={countdownActive}
+        progress={progress}
+      />
       <ContainerCookModels
         tempo={timeFormated}
         potencia={powerValue}

@@ -32,6 +32,15 @@ const ContainerCookModels = ({
   const [stringCarregamento, setStringcarregamento] = useState<string>("");
   const [instrucoes, setInstrucoes] = useState<string>("");
 
+  const fetchCookModels = async () => {
+    try {
+      const models = await GetAll();
+      setCookModels(models);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const createNewModel = async () => {
     const newModel: ICookModel = {
       nome,
@@ -42,6 +51,8 @@ const ContainerCookModels = ({
       potencia,
     };
     await PostService(newModel);
+    fetchCookModels();
+    alert("Modelo criado com sucesso");
   };
 
   const updateModel = async () => {
@@ -54,18 +65,18 @@ const ContainerCookModels = ({
       potencia,
     };
     await UpdateService(newModel);
+    fetchCookModels();
+    handleCancelButton();
+    alert("Modelo atualizado com sucesso!");
+  };
+
+  const deleteModel = async (nome: string) => {
+    DeleteService(nome);
+    fetchCookModels();
+    alert("Modelo deletado com sucesso");
   };
 
   useEffect(() => {
-    const fetchCookModels = async () => {
-      try {
-        const models = await GetAll();
-        setCookModels(models);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-
     fetchCookModels();
   }, []);
 
@@ -177,12 +188,14 @@ const ContainerCookModels = ({
               <button
                 onClick={() => handleEditButton(model)}
                 className={styles.editButton}
+                disabled={model.alteravel ? false : true}
               >
                 <h6>Edit</h6>
               </button>
               <button
-                onClick={() => DeleteService(model.nome)}
+                onClick={() => deleteModel(model.nome)}
                 className={styles.deleteButton}
+                disabled={model.alteravel ? false : true}
               >
                 <h6>Delete</h6>
               </button>
